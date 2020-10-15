@@ -1,7 +1,7 @@
 <template>
-  <div :class=&quot;['game-board__cell', rowClass, colClass, stateClass, finalClass]&quot; @click=&quot;click(position)&quot;>
-    <i v-if=&quot;state === 1&quot; class=&quot;far fa-circle&quot;></i>
-    <i v-else-if=&quot;state === 2&quot; class=&quot;fas fa-times&quot;></i>
+  <div :class="['game-board__cell', rowClass, colClass, stateClass, finalClass]" @click="click(position)">
+    <i v-if="state === 1" class="far fa-circle"></i>
+    <i v-else-if="state === 2" class="fas fa-times"></i>
   </div>
 </template>
 
@@ -9,14 +9,12 @@
 export default {
   name: 'game-board-cell',
   props: ['position', 'state', 'final'],
-
   computed: {
     rowClass() { return `game-board__cell--row-${Math.floor(this.position / 3)}`; },
     colClass() { return `game-board__cell--col-${this.position % 3}`; },
     stateClass() { return `game-board__cell--${this.state ? 'set' : 'unset'}`; },
     finalClass() { return this.final ? `game-board__cell--${this.final}` : false; }
   },
-
   methods: {
     click(position) {
       this.$emit('select-cell', position);
@@ -37,11 +35,11 @@ export default {
 .game-board__cell--loss {
   color: #73021B;
 }
-.game-board--interactive .game-board__cell--unset {
+.game-board--active .game-board__cell--unset {
   background-color: rgba(224, 255, 0, 0.1);
   cursor: pointer;
 }
-.game-board--interactive .game-board__cell--unset:hover {
+.game-board--active .game-board__cell--unset:hover {
   background-color: rgba(224, 255, 0, 0.3);
 }
 .game-board__cell--row-0.game-board__cell--col-0 {

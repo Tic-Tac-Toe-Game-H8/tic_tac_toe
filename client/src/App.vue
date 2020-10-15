@@ -1,7 +1,7 @@
 <template>
-  <div id=&quot;app&quot;>
+  <div id="app">
     <h1>Tic Tac Toe</h1>
-    <router-view :key=&quot;$route.path&quot; />
+    <router-view :key="$route.path" />
   </div>
 </template>
 
@@ -21,6 +21,8 @@ body, button, input {
   font-family: 'Alegreya Sans', sans-serif;
   font-size: 24px;
   font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 h1 {
   margin: 40px 0;

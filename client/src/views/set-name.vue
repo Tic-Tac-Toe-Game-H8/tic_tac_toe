@@ -1,33 +1,31 @@
 <template>
-  <div class=&quot;set-name&quot;>
-    <input type=&quot;text&quot; ref=&quot;input&quot;
-      placeholder=&quot;Enter your name here&quot;
-      :value=&quot;name&quot;
-      @input=&quot;onInput&quot;
-      @keydown=&quot;onKeyDown&quot; />
+  <div class="set-name">
+    <input type="text" ref="input"
+      placeholder="Enter your name here"
+      :value="name"
+      @input="onInput"
+      @keydown="onKeyDown" />
   </div>
 </template>
 
 <script>
 export default {
   name: 'set-name',
-
   props: ['name'],
-
   methods: {
     onInput({ target: { value } }) {
       this.$emit('set-name', value.trim());
     },
-
     onKeyDown({ keyCode }) {
       if (keyCode === 13) {
         this.$emit('accept-name');
       }
     }
   },
-
   mounted() {
-    this.$refs.input.focus();
+    if (!this.value) {
+      this.$refs.input.focus();
+    }
   }
 };
 </script>
