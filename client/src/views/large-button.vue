@@ -1,13 +1,12 @@
 <template>
-  <div :class='large-button'>
-    <button @click=&quot;click&quot; :disabled=&quot;isDisabled&quot;>{{ text }}</button>
+  <div :class="{ 'large-button': true }">
+    <button @click="click" :disabled="isDisabled">{{ text }}</button>
   </div>
 </template>
 
 <script>
 export default {
   name: 'large-button',
-
   props: {
     text: {
       type: String,
@@ -18,7 +17,6 @@ export default {
       default: false
     }
   },
-
   methods: {
     click() {
       this.$emit('click');
