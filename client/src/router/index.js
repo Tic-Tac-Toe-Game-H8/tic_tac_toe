@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from './components/home';
-import Lobby from './components/lobby';
+import Home from './views/home';
+import Lobby from './views/lobby';
 import Game from './components/game';
 
 Vue.use(VueRouter)
