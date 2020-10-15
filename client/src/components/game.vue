@@ -1,14 +1,14 @@
 <template>
-  <div class=&quot;game&quot;>
-    <div class=&quot;game__board&quot; v-if=&quot;otherPlayerName&quot;>
-      <div class=&quot;game__other-player-name&quot;>Your opponent is {{ otherPlayerName }}</div>
-      <game-board @select-position=&quot;selectPosition&quot; :board=&quot;board&quot; :interactive=&quot;isMyTurn&quot;
-                  :winningState=&quot;winningState&quot; :isWinner=&quot;isWinner&quot; />
-      <div class=&quot;game__turn&quot;>{{ currentTurn }}</div>
-      <large-button @click=&quot;onReturnToLobby&quot; text=&quot;Back to Lobby&quot; v-if=&quot;winningState || isDraw&quot; />
+  <div class="game">
+    <div class="game__board" v-if="otherPlayerName">
+      <div class="game__other-player-name">Your opponent is {{ otherPlayerName }}</div>
+      <game-board @select-position="onSelectPosition" :board="board" :active="isMyTurn"
+                  :winningState="winningState" :isWinner="isWinner" />
+      <div class="game__turn">{{ currentTurn }}</div>
+      <large-button @click="onReturnToLobby" text="Back to Lobby" v-if="winningState || isDraw" />
     </div>
-    <div class=&quot;game__waiting&quot; v-else>
-      <div class=&quot;game__waiting-message&quot; v-if=&quot;!otherPlayerName&quot;>Waiting for an opponent...</div>
+    <div class="game__waiting" v-else>
+      <div class="game__waiting-message" v-if="!otherPlayerName">Waiting for an opponent...</div>
     </div>
   </div>
 </template>
@@ -17,10 +17,8 @@
 import GameBoard from './game-board';
 import LargeButton from './large-button';
 import { enterGame } from '../state';
-
 export default {
   name: 'game',
-
   data() {
     return {
       gameId: this.$route.params.id,
@@ -33,28 +31,26 @@ export default {
       board: [0,0,0,0,0,0,0,0,0]
     };
   },
-
   components: {
     GameBoard,
     LargeButton,
   },
-
   computed: {
+    url() {
+      return location.href;
+    },
     currentTurn() {
       return this.isDraw ? `Dagnabbit. It's a draw.` : this.winningState
         ? this.isWinner ? 'You won the game!' : `${this.otherPlayerName} is the winner.`
         : this.isMyTurn ? `It's your turn` : `Waiting for ${this.otherPlayerName} to make a move`;
     }
   },
-
   methods: {
     onGameStateUpdated(state) {
       this.otherPlayerName = state.otherPlayerName;
       this.board = [...state.board];
-
       const currentPlayerId = state[state.currentPlayer];
       const isCurrentPlayer = state.clientId === currentPlayerId;
-
       if (state.status === 'in-progress') {
         this.isMyTurn = isCurrentPlayer;
       }
@@ -69,12 +65,13 @@ export default {
         this.isMyTurn = false;
       }
     },
-
+    onSelectPosition(position) {
+      this.selectPosition(position);
+    },
     onReturnToLobby() {
       this.$router.push(`/lobby`);
     }
   },
-
   mounted() {
     this.selectPosition = enterGame(this.gameId, this.onGameStateUpdated.bind(this));
   },
