@@ -1,14 +1,27 @@
 <template>
   <div id="app">
     <h1>Tic Tac Toe</h1>
-    <router-view :key="$route.path" />
+    <router-view />
   </div>
 </template>
 
 <script>
 export default {
   name: 'App',
-};
+  computed: {
+    home () {
+      return this.$store.state.home
+    }
+  },
+  watch: {
+    home () {
+      if (this.home) {
+        this.$store.commit('RESET_GAME')
+        this.$router.push('/')
+      }
+    }
+  }
+}
 </script>
 
 <style>

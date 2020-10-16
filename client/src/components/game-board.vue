@@ -1,32 +1,47 @@
 <template>
-  <div :class="{ 'game-board': true, 'game-board--active': active }">
-    <template v-for="(state, position) in board">
-      <game-board-cell
-        :position="position"
-        :state="state"
-        :final="winningState && winningState.includes(position) && (isWinner ? 'win' : 'loss')"
-        :key="position"
-        @select-cell="onClickCell" />
-    </template>
+  <div class="game-board">
+    <div class="cell" v-for="(board, index) in boards" :key="index" @click="onClickCell(index)">{{board}}</div>
   </div>
 </template>
 
 <script>
-import GameBoardCell from './game-board-cell';
 export default {
   name: 'game-board',
-  props: ['board', 'winningState', 'active', 'isWinner'],
-  components: {
-    GameBoardCell,
+  props: ['isActive'],
+  computed: {
+    currentPlayer () {
+      return this.$store.state.players.filter((player) => player.name === localStorage.name)[0]
+    },
+    otherPlayer () {
+      return this.$store.state.players.filter((player) => player.name !== localStorage.name)[0]
+    },
+    position () {
+      return this.$store.state.position
+    }
+  },
+  data () {
+    return {
+      boards: ['', '', '', '', '', '', '', '', '']
+    }
+  },
+  watch: {
+    position () {
+      let value = ''
+      if (this.isActive) value = this.currentPlayer.symbol
+      else value = this.otherPlayer.symbol
+      const newBoard = [...this.boards]
+      newBoard[this.position] = value
+      this.boards = newBoard
+    }
   },
   methods: {
-    onClickCell(position) {
-      if(this.active) {
-        this.$emit('select-position', position);
+    onClickCell (position) {
+      if (this.isActive && this.boards[position] === '') {
+        this.$socket.emit('setPosition', position)
       }
     }
   }
-};
+}
 </script>
 
 <style>
@@ -37,5 +52,9 @@ export default {
   width: 200px;
   height: 200px;
   font-size: 48px;
+}
+
+.cell {
+  border: 2px solid white;
 }
 </style>
