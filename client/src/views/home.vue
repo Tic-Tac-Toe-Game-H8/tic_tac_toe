@@ -10,6 +10,9 @@
         <div :class="{ 'large-button': true }">
           <button type="submit" :disabled="name.length ? false : true">Enter Game</button>
         </div>
+        <div class="d-flex align-items-center justify-content-center" >
+            <img src="./assets/50937245_60x60.gif" style="max-width: 30%" alt="img" class="img-fluid">
+        </div>
       </form>
     </div>
   </div>
