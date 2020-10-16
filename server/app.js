@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const { restart } = require("nodemon");
 
 const app = express();
 var http = require("http").createServer(app);
