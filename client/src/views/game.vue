@@ -8,6 +8,9 @@
     <div class="game__waiting" v-else>
       <div class="game__waiting-message" v-if="players.length === 1">Waiting for an opponent...</div>
     </div>
+      <div class="d-flex align-items-center justify-content-center" >
+            <img src="./assets/g2olbqf.gif" style="max-width: 30%" alt="img" class="img-fluid">
+        </div>
   </div>
 </template>
 
