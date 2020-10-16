@@ -1,35 +1,88 @@
 <template>
   <div class="home">
-    <set-name :name="name" @set-name="onSetName" @accept-name="onAcceptName" />
-    <large-button @click="onAcceptName" text="Enter Lobby" :is-disabled="!name" />
+    <div class="set-name">
+      <form @submit.prevent="playGame">
+        <input type="text" ref="input"
+          placeholder="Enter your name here"
+          v-model="name"
+          autofocus
+        />
+        <div :class="{ 'large-button': true }">
+          <button type="submit" :disabled="name.length ? false : true">Enter Game</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <script>
-import LargeButton from './large-button';
-import SetName from './set-name';
-import generate from 'nanoid/generate';
-import { storeUserName, retrieveUserName } from '../state';
 export default {
   name: 'home',
-  data() {
+  data () {
     return {
-      name: retrieveUserName()
+      name: ''
     }
   },
-  components: {
-    SetName,
-    LargeButton,
+  computed: {
+    players () {
+      return this.$store.state.players
+    }
   },
   methods: {
-    onSetName(name) {
-      this.name = name;
-      this.preventCreate = name.length === 0;
-    },
-    onAcceptName() {
-      storeUserName(this.name);
-      this.$router.push(`/lobby`);
+    playGame () {
+      console.log(this.name)
+      this.$socket.emit('userConnect', this.name)
+      localStorage.setItem('name', this.name)
+      this.$router.push('/game')
     }
   }
-};
+}
 </script>
+
+<style>
+.set-name {
+  display: block;
+}
+input {
+  border: none;
+  outline: none;
+  text-align: center;
+  line-height: 36px;
+  color: #f7f7f7;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+input::placeholder {
+  color: #e7e7e7;
+}
+input:focus::placeholder {
+  color: rgba(255, 255, 255, 0.15);
+}
+
+button {
+  border: none;
+  border-radius: 5px;
+  padding: 10px 30px;
+  font-weight: 500;
+  outline: none;
+  color: #f7f7f7;
+  background-color: #73021B;
+}
+.large-button {
+  margin-top: 40px;
+}
+.large-button button[disabled] {
+  color: #27627F;
+  background-color: #003D50;
+  opacity: 0.5;
+}
+.large-button button:not([disabled]) {
+  cursor: pointer;
+}
+.large-button button:not([disabled]):hover {
+  color: #FEC500;
+}
+.large-button button:not([disabled]):active {
+  color: #001824;
+  background-color: #FEC500;
+}
+</style>

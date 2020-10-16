@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { restart } = require("nodemon");
 
 const app = express();
 var http = require("http").createServer(app);
@@ -18,41 +19,63 @@ io.on("connection", (socket) => {
   console.log("a user connected");
 
   socket.on("userConnect", (player) => {
-    players.push(player);
-    io.emit("userConnected", players);
+    console.log(player, '<<<<ASUPP')
+    if(players.length === 0) {
+      players.push({
+        name: player,
+        symbol: 'x'
+      }) 
+    }
+    else if(players.length === 1) {
+      players.push({
+        name: player,
+        symbol: 'o'
+      });
+    }
+    io.emit("USER_CONNECTED", players);
 
     // Kalau jumlah player udah 2 mulai game dengan mengirim turn (player)
     if (players.length === 2) {
-      resetGame();
-      io.emit("sendTurn", players[turn]);
+      // resetGame();
+      board = ["", "", "", "", "", "", "", "", ""];
+      turn = 0;
+      io.emit("SEND_TURN", players[turn]);
     }
   });
 
   socket.on("setPosition", (position) => {
-    const value = "";
-
+    let value = "";
     // Mengirim posisi ke semua player
-    io.emit("sendPosition", position);
+    io.emit("SEND_POSITION", position);
 
     // Untuk mengisi board
     if (turn === 0) value = "x";
     else if (turn === 1) value = "o";
 
     board[position] = value;
+    console.log(board)
 
     // Check apakah user menang
     if (checkForWinCondition(board, position)) {
-      io.emit("sendWinner", players[turn]);
+      console.log(players[turn], '<<<<WINNER')
+      io.emit("SEND_WINNER", players[turn]);
+      resetGame();
+      console.log(players, board, turn)
+    } else if (checkForDrawCondition(board)) {
+      io.emit("SEND_DRAW", true)
       resetGame();
     } else {
       // Untuk ganti turn
       turn = turn === 0 ? 1 : 0;
-      io.emit("sendTurn", players[turn]);
-    }
+      console.log(players[turn])
+      io.emit("SEND_TURN", players[turn]);
+    } 
   });
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
+    if(players.length === 2) io.emit("SEND_HOME", "HOME")
+    resetGame()
   });
 });
 
@@ -77,6 +100,13 @@ const checkForWinCondition = (board, latestPosition) => {
     checkPositions(2, 4, 6)
   );
 };
+
+const checkForDrawCondition = (board) => {
+  for(let i = 0; i < board.length; i++) {
+    if (board[i] === "") return false
+  }
+  return true
+}
 
 const resetGame = () => {
   turn = 0;
